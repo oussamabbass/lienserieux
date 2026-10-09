@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}LienSérieux — Discussions{% endblock %}
+{% block body_class %}page-workspace{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <header class="site-header">
+        <div class="page-container site-header__inner">
+            <a class="brand-link" href="/">LienSérieux<span class="brand-link__dot">.</span></a>
+            <button type="button" class="share-btn" id="shareAppBtn" aria-label="Partager LienSérieux">Partager</button>
+        </div>
+    </header>
+    <main class="page-container workspace-main">
+        <h1 class="discovery-title">Discussions</h1>
+        <p class="discovery-intro">Tes conversations en cours. Tout est gratuit.</p>
+
+        {% if conversations %}
+            <div class="profile-search conversation-search">
+                <label class="profile-search__label" for="conversationSearch">Rechercher</label>
+                <input class="profile-search__input" id="conversationSearch" type="search" placeholder="Nom ou message…" autocomplete="off">
+            </div>
+            <div class="conversation-list">
+                {% for conversation in conversations %}
+                    <a class="conversation-list__item" data-search="{{ conversation.username }} {{ conversation.last_message or '' }}" href="{{ url_for('chat', receiver_id=conversation.id) }}">
+                        <span class="conversation-list__avatar" data-avatar aria-hidden="true">
+                            {% set avatar = conversation.avatar_url|default('', true) %}
+                            {% set has_avatar = avatar and avatar not in ('default_avatar.png', 'None') %}
+                            {% if has_avatar %}<img alt="" src="{% if avatar.startswith('http://') or avatar.startswith('https://') or avatar.startswith('/static/') %}{{ avatar }}{% elif avatar.startswith('uploads/') %}{{ url_for('static', filename=avatar) }}{% else %}{{ url_for('static', filename='uploads/avatars/' ~ avatar) }}{% endif %}">{% endif %}
+                            <span class="conversation-list__fallback" {% if has_avatar %}hidden{% endif %}>{{ conversation.username[:1]|upper }}</span>
+                        </span>
+                        <span class="conversation-list__text">
+                            <span class="conversation-list__title"><strong>{{ conversation.username }}</strong><time>{{ conversation.last_message_at[11:16] if conversation.last_message_at else '' }}</time></span>
+                            <span>{% if conversation.last_message_type == 'audio' %}🎤 Message vocal{% elif conversation.last_message_type == 'image' %}📷 Photo{% elif conversation.last_message_type == 'video' %}🎬 Vidéo{% else %}{{ conversation.last_message or 'Nouvelle discussion' }}{% endif %}</span>
+                        </span>
+                        <span class="conversation-list__arrow" aria-hidden="true">›</span>
+                    </a>
+                {% endfor %}
+            </div>
+            <p class="empty-state conversation-no-results" id="conversationNoResults" hidden>Aucune discussion ne correspond.</p>
+        {% else %}
+            <div class="empty-state" style="text-align:center; padding: 2.5rem 1rem;">
+                <p style="font-size:1.15rem; margin-bottom:0.4rem;">Pas encore de discussion</p>
+                <p style="opacity:0.7; margin-bottom:1.5rem;">Va découvrir des profils et envoie le premier message.<br>C’est gratuit et sans engagement.</p>
+                <a class="profile-action" href="{{ url_for('index') }}">Découvrir des profils</a>
+            </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js', v=config['STATIC_ASSET_VERSION']) }}" defer></script>
+{% endblock %}

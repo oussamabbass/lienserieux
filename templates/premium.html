@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}LienSérieux — Premium{% endblock %}
+{% block body_class %}page-premium{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <header class="site-header">
+        <div class="page-container site-header__inner">
+            <a aria-label="LienSérieux, accueil" class="brand-link" href="/">
+                LienSérieux<span class="brand-link__dot">.</span>
+            </a>
+            <button type="button" class="share-btn" id="shareAppBtn" aria-label="Partager LienSérieux">
+                Partager
+            </button>
+        </div>
+    </header>
+
+    <main class="page-container" style="padding-top: 1.5rem; padding-bottom: 6rem;">
+        <div style="background: #0A5C4B; color: white; padding: 1.3rem 1.4rem; border-radius: 14px; margin-bottom: 1.8rem;">
+            <strong style="font-size:1.1rem;">Tout est gratuit pour l’instant</strong>
+            <p style="margin:0.4rem 0 0; opacity:0.9; font-size:0.95rem;">
+                Messages, profils, vocaux… Aucune limite. Profite tranquillement.
+            </p>
+        </div>
+
+        <h1 style="font-size: 1.5rem; margin-bottom: 0.4rem;">Premium (bientôt)</h1>
+        <p style="opacity: 0.75; margin-bottom: 1.8rem;">
+            Plus tard, tu pourras booster ton profil si tu le souhaites. Pour l’instant, tout le monde a les mêmes chances.
+        </p>
+
+        <div style="border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 1.4rem; margin-bottom: 1.5rem;">
+            <h2 style="margin-top: 0; font-size:1.15rem;">Ce que Premium offrira</h2>
+            <ul style="line-height: 1.85; padding-left: 1.2rem; opacity:0.9;">
+                <li>Boost de profil (apparaître en premier)</li>
+                <li>Filtres plus précis</li>
+                <li>Voir qui a lu tes messages</li>
+                <li>Support prioritaire</li>
+            </ul>
+            <p style="font-size: 1.25rem; font-weight: 700; margin: 1.2rem 0 0.3rem;">
+                Prix à venir
+            </p>
+            <button class="profile-action" style="width: 100%; margin-top: 1rem; opacity:0.6;" disabled>
+                Pas encore disponible
+            </button>
+        </div>
+
+        <p style="font-size: 0.85rem; opacity: 0.55; line-height:1.5;">
+            LienSérieux est une application pour les personnes qui cherchent une relation sérieuse.
+            Aucun contenu illégal. Aucun plan d’un soir encouragé.
+        </p>
+    </main>
+</div>
+{% endblock %}
