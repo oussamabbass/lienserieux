@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
     bio TEXT,
     avatar_url VARCHAR(255) DEFAULT 'default_avatar.png',
     gender VARCHAR(20),
+    google_id VARCHAR(255) UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table des Matchs / Likes
 CREATE TABLE IF NOT EXISTS matches (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id_1 INTEGER NOT NULL,
@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS matches (
     FOREIGN KEY (user_id_2) REFERENCES users (id)
 );
 
--- Table des Messages (Textes et Vocaux)
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sender_id INTEGER NOT NULL,
@@ -34,7 +33,6 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (receiver_id) REFERENCES users (id)
 );
 
--- Préférences privées de chaque compte
 CREATE TABLE IF NOT EXISTS user_settings (
     user_id INTEGER PRIMARY KEY,
     profile_visible INTEGER NOT NULL DEFAULT 1,
