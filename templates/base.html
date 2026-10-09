@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr" data-palette="{{ session.get('theme', 'ivoire-rose') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A5C4B">
+    <title>{% block title %}LienSérieux{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.2ba2a0b1dacfa6ed.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.079144ee09f4f1d0.png') }}">
+    <link rel="preload" href="{{ url_for('static', filename='fonts/dm-sans-latin.4928e3dac761.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', filename='fonts/dm-serif-display-latin.fbbc8026502b.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=config['STATIC_ASSET_VERSION']) }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}{% if session.get('user_id') %} has-bottom-nav{% endif %}">
+    {% block content %}{% endblock %}
+    {% if session.get('user_id') %}
+        <nav class="bottom-nav" aria-label="Navigation principale">
+            <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}aria-current="page"{% endif %}>Découvrir</a>
+            <a href="{{ url_for('conversations') }}" {% if request.endpoint in ('conversations', 'chat') %}aria-current="page"{% endif %}>Discussions</a>
+            <a href="{{ url_for('premium') }}" {% if request.endpoint == 'premium' %}aria-current="page"{% endif %}>Premium</a>
+            <a href="{{ url_for('profile') }}" {% if request.endpoint == 'profile' %}aria-current="page"{% endif %}>Profil</a>
+        </nav>
+    {% endif %}
+    {% block scripts %}{% endblock %}
+    <script>
+    document.addEventListener('click', function(e) {
+        var burst = document.createElement('div');
+        burst.className = 'holographic-burst';
+        burst.style.left = e.clientX + 'px';
+        burst.style.top = e.clientY + 'px';
+        document.body.appendChild(burst);
+        burst.addEventListener('animationend', function() { burst.remove(); });
+    }, { passive: true });
+    document.addEventListener('click', async function(e) {
+        var btn = e.target.closest('#shareAppBtn, .share-btn');
+        if (!btn) return;
+        e.preventDefault();
+        var shareData = {
+            title: 'LienSérieux',
+            text: 'Rejoins LienSérieux \u2014 des relations sérieuses, 100 % gratuit.',
+            url: window.location.origin || 'https://lienserieux.app'
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(shareData.url + ' \u2014 ' + shareData.text);
+                btn.textContent = 'Lien copié !';
+                setTimeout(function() { btn.textContent = 'Partager'; }, 2000);
+            } else {
+                prompt('Copie ce lien :', shareData.url);
+            }
+        } catch (err) {
+            if (err && err.name !== 'AbortError') {
+                try {
+                    await navigator.clipboard.writeText(shareData.url);
+                    btn.textContent = 'Lien copié !';
+                    setTimeout(function() { btn.textContent = 'Partager'; }, 2000);
+                } catch (_) {}
+            }
+        }
+    });
+    </script>
+</body>
+</html>
