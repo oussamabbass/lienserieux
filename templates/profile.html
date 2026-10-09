@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}LienSérieux — Paramètres{% endblock %}
+{% block body_class %}page-workspace{% endblock %}
+{% block content %}
+<div class="profile-page">
+  <header class="site-header">
+    <div class="page-container site-header__inner">
+      <a class="brand-link" href="/">LienSérieux<span class="brand-link__dot">.</span></a>
+      <button type="button" class="share-btn" id="shareAppBtn">Partager</button>
+    </div>
+  </header>
+  <main class="page-container" style="padding:1.5rem;padding-bottom:6rem">
+    <h1>Paramètres</h1>
+    <p>Bonjour {{ user.username }}</p>
+    {% if saved %}<p class="workspace-success">Enregistré.</p>{% endif %}
+    {% if error %}<p class="settings-error">Erreur : {{ error }}</p>{% endif %}
+
+    <section style="margin:1.5rem 0">
+      <h2>Profil</h2>
+      <form method="post" action="{{ url_for('profile') }}" enctype="multipart/form-data">
+        <input type="hidden" name="section" value="profile">
+        <label>Bio</label>
+        <textarea name="bio" rows="3" maxlength="500">{{ user.bio or '' }}</textarea>
+        <label>Photo</label>
+        <input type="file" name="avatar" accept="image/*">
+        <button class="profile-action" type="submit">Enregistrer</button>
+      </form>
+    </section>
+
+    <section style="margin:1.5rem 0">
+      <h2>Apparence</h2>
+      <form method="post" action="{{ url_for('profile') }}">
+        <input type="hidden" name="section" value="appearance">
+        <select name="theme">
+          <option value="ivoire-rose" {% if settings.theme == 'ivoire-rose' %}selected{% endif %}>Clair</option>
+          <option value="porcelaine-bleue" {% if settings.theme == 'porcelaine-bleue' %}selected{% endif %}>Bleu</option>
+          <option value="soiree-feutree" {% if settings.theme == 'soiree-feutree' %}selected{% endif %}>Soirée</option>
+          <option value="mode-sombre" {% if settings.theme == 'mode-sombre' %}selected{% endif %}>Mode sombre</option>
+        </select>
+        <button class="profile-action" type="submit">Appliquer</button>
+      </form>
+    </section>
+
+    <section style="margin:1.5rem 0">
+      <h2>Compte</h2>
+      <form method="post" action="{{ url_for('profile') }}">
+        <input type="hidden" name="section" value="account">
+        <label>Nom d’utilisateur</label>
+        <input name="username" value="{{ user.username }}" required>
+        <label>E-mail</label>
+        <input name="email" type="email" value="{{ user.email }}" required>
+        <label>Mot de passe actuel</label>
+        <input name="current_password" type="password" required>
+        <label>Nouveau mot de passe</label>
+        <input name="new_password" type="password">
+        <button class="profile-action" type="submit">Mettre à jour</button>
+      </form>
+    </section>
+
+    <p><a href="{{ url_for('logout') }}">Se déconnecter</a></p>
+  </main>
+</div>
+{% endblock %}

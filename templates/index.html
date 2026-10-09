@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}LienSérieux — Découvrir{% endblock %}
+{% block body_class %}page-profiles{% endblock %}
+{% block content %}
+<div class="profile-page">
+  <header class="site-header">
+    <div class="page-container site-header__inner">
+      <a class="brand-link" href="/">LienSérieux<span class="brand-link__dot">.</span></a>
+      <button type="button" class="share-btn" id="shareAppBtn">Partager</button>
+    </div>
+  </header>
+  <main class="page-container discovery-main">
+    <h1 class="discovery-title">Trouve quelqu’un de sérieux</h1>
+    <p class="discovery-intro">Des personnes qui cherchent une vraie relation. Gratuit, simple, sans pression.</p>
+    {% if users %}
+    <p class="profile-count" id="profileCount">{{ users|length }} profil{% if users|length > 1 %}s{% endif %}</p>
+    <div class="profile-search">
+      <input class="profile-search__input" id="profileSearch" type="search" placeholder="Rechercher…">
+    </div>
+    <div class="profile-grid" id="profileGrid">
+      {% for user in users %}
+      {% set avatar = user.avatar_url|default('', true) %}
+      {% set has_avatar = avatar and avatar not in ('default_avatar.png', 'None') %}
+      <article class="profile-card" data-search="{{ user.username }} {{ user.bio or '' }}">
+        <div class="profile-card__media" data-avatar>
+          {% if has_avatar %}
+          <img class="profile-card__photo" alt="" src="{% if avatar.startswith('uploads/') %}{{ url_for('static', filename=avatar) }}{% else %}{{ url_for('static', filename='uploads/avatars/' ~ avatar) }}{% endif %}">
+          {% endif %}
+          <span class="profile-card__fallback" {% if has_avatar %}hidden{% endif %}>{{ user.username[:1]|upper }}</span>
+        </div>
+        <div class="profile-card__details">
+          <h2 class="profile-card__name">{{ user.username }}</h2>
+          <p class="profile-card__bio">{{ user.bio if user.bio else 'Envie d’échanger sincèrement' }}</p>
+          <a class="profile-action" href="{{ url_for('chat', receiver_id=user.id) }}">Écrire</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" style="text-align:center;padding:2rem">
+      <p>Tu es parmi les premiers.</p>
+      <a class="profile-action" href="{{ url_for('profile') }}">Compléter mon profil</a>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js', v=config['STATIC_ASSET_VERSION']) }}" defer></script>
+{% endblock %}

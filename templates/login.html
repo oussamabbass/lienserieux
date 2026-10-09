@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set is_register = mode == 'register' %}
+{% block title %}LienSérieux — {{ 'Créer un compte' if is_register else 'Connexion' }}{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+{% block content %}
+<div class="auth-page" style="max-width:420px;margin:2rem auto;padding:1.5rem">
+  <a class="brand-link" href="{{ url_for('login') }}">LienSérieux<span class="brand-link__dot">.</span></a>
+  <p style="margin:1rem 0;opacity:0.8">100 % gratuit · Relations sérieuses</p>
+  <h1>{{ 'Créer un compte' if is_register else 'Connexion' }}</h1>
+  {% if error %}<p class="auth-error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('register' if is_register else 'login') }}" class="auth-form">
+    <div class="auth-field">
+      <label for="username">Nom d’utilisateur</label>
+      <input id="username" name="username" required value="{{ username|default('', true) }}">
+    </div>
+    {% if is_register %}
+    <div class="auth-field">
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" required value="{{ email|default('', true) }}">
+    </div>
+    {% endif %}
+    <div class="auth-field">
+      <label for="password">Mot de passe</label>
+      <input id="password" name="password" type="password" required>
+    </div>
+    <button class="auth-submit profile-action" type="submit">{{ 'S’inscrire' if is_register else 'Se connecter' }}</button>
+  </form>
+  <p style="margin-top:1rem">
+    {% if is_register %}Déjà inscrit ? <a href="{{ url_for('login') }}">Se connecter</a>
+    {% else %}Pas de compte ? <a href="{{ url_for('register') }}">S’inscrire</a>{% endif %}
+  </p>
+</div>
+{% endblock %}

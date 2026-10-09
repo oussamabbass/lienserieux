@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}LienSérieux — {{ receiver.username }}{% endblock %}
+{% block body_class %}page-chat{% endblock %}
+{% block content %}
+<div class="chat-page">
+  <header class="site-header">
+    <div class="page-container site-header__inner">
+      <a class="brand-link" href="{{ url_for('conversations') }}">← Discussions</a>
+      <strong>{{ receiver.username }}</strong>
+    </div>
+  </header>
+  <div class="chat-content">
+    <div class="chat-thread" id="chatBox" data-last-message-id="{{ messages[-1].id if messages else 0 }}">
+      {% if messages %}
+        {% for msg in messages %}
+        {% set is_sent = msg.sender_id == session['user_id'] %}
+        <div class="message-row{% if is_sent %} message-row--sent{% endif %}" data-message-id="{{ msg.id }}">
+          <div class="message-bubble message-bubble--{{ 'sent' if is_sent else 'received' }}">
+            {% if msg.message_type == 'text' %}<p>{{ msg.content }}</p>
+            {% elif msg.message_type == 'audio' %}<audio class="message-audio" controls src="{{ url_for('static', filename=msg.content) }}"></audio>
+            {% elif msg.message_type == 'image' %}<img class="message-media" src="{{ url_for('static', filename=msg.content) }}" alt="Photo">
+            {% elif msg.message_type == 'video' %}<video class="message-media" controls src="{{ url_for('static', filename=msg.content) }}"></video>
+            {% endif %}
+            <time class="message-time">{{ msg.created_at[11:16] }}</time>
+            {% if is_sent %}<button type="button" class="message-delete" data-message-id="{{ msg.id }}">×</button>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="chat-empty">Aucun message. Écris le premier.</p>
+      {% endif %}
+    </div>
+    {% if can_message %}
+    <form class="chat-form" id="chatForm" action="{{ url_for('send_message') }}" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="receiver_id" value="{{ receiver.id }}">
+      <input type="hidden" name="message_type" value="text">
+      <div class="chat-composer__controls">
+        <input class="chat-input" id="textInput" name="content" placeholder="Écrire un message…" autocomplete="off">
+        <label class="chat-action" for="mediaInput">📷<input type="file" id="mediaInput" name="media_file" accept="image/*,video/*" hidden></label>
+        {% if can_send_audio %}<button type="button" class="chat-action" id="recordBtn">Vocal</button>{% endif %}
+        <button type="submit" class="chat-action chat-action--primary" id="sendBtn">Envoyer</button>
+      </div>
+      <p id="mediaPreview" hidden></p>
+      <p class="chat-feedback" id="chatStatus" hidden></p>
+    </form>
+    {% else %}
+    <p class="chat-feedback">Cette personne n’accepte pas les messages.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>const receiverId = {{ receiver.id | tojson }}; const currentUserId = {{ session['user_id'] | tojson }};</script>
+<script src="{{ url_for('static', filename='js/main.js', v=config['STATIC_ASSET_VERSION']) }}" defer></script>
+<script src="{{ url_for('static', filename='js/chat.js', v=config['STATIC_ASSET_VERSION']) }}" defer></script>
+<script src="{{ url_for('static', filename='js/recorder.js', v=config['STATIC_ASSET_VERSION']) }}" defer></script>
+{% endblock %}
